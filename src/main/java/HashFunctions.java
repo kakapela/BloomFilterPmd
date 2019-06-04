@@ -1,12 +1,35 @@
 import lombok.Data;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Data
 public class HashFunctions {
+
+    // a,b - a od 1 do p-1, b od 0 do p-1
+    //p>m
+
+    public static int universalHash(int x ,int m){
+
+        BigInteger value = new BigInteger(String.valueOf(m));
+        int p = value.nextProbablePrime().intValue();
+        //bound is p-1, a oraz b losowane z przedzialu
+        int a = ThreadLocalRandom.current().nextInt(0, p);
+        int b = ThreadLocalRandom.current().nextInt(1, p);
+
+        int position = ((a*x+b) % p) % m ;
+
+        return position;
+    }
+
+
+
+
+
     public static int simpleHash(long x, int m){
         return Math.toIntExact(x % m);
     }
