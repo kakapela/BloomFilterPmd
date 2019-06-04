@@ -148,7 +148,7 @@ public class BloomFilter2 {
    /*     System.out.println("Zahaszowana 10 to: " + position);
         HashFunctions.universalHash(10,20);*/
 
-   HashFunctions.universalHash( 199999999 , 100000,3);
+   HashFunctions.simpleHash(99999999 , 10,1);
         //HashFunctions.simpleHash(199999999,10,3);
 
   //      Map<Integer, Integer

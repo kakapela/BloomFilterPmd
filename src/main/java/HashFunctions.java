@@ -1,6 +1,7 @@
 import lombok.Data;
 
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -119,6 +120,18 @@ public class HashFunctions {
                 long estimatedTime = System.nanoTime() - startTime;
                 printData(treeMap);
                 System.out.println("Czas obliczeñ: " + estimatedTime/1_000_000_000.0 + " sec");
+
+                System.out.println(treeMap.get(0));
+                System.out.println(numbersRange);
+
+
+                double sum=0;
+                for(int i =0; i<10;i++){
+                double liczba = (double) treeMap.get(i)/numbersRange;
+                System.out.println("Dla "+ i+ " : " + liczba);
+                sum+=liczba;
+                    System.out.println("Suma pdp wynosi: " + sum);
+                }
                 break;
             }
             //parzyste
