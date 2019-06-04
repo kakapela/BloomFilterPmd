@@ -150,7 +150,7 @@ public class BloomFilter2 {
 
    //HashFunctions.simpleHash(99999999, 1000,1);
 //        HashFunctions.simpleHash(99999999, 100000,1);
-        HashFunctions.universalHash(99999999, 100000,1);
+        HashFunctions.universalHash(99999999, 10,1);
 //   HashFunctions.universalHash(99999999, 10,1);
         //HashFunctions.simpleHash(199999999,10,3);
 
