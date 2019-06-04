@@ -22,7 +22,6 @@ public class BloomFilter2 {
 
         // Calculate prime number and store it in object
         this.prime = this.findPrimeNumber();
-        System.out.println("P wynosi: " + this.prime);
         // Run generator hash functions
         this.prepareHashFunctions();
     }
@@ -146,8 +145,10 @@ public class BloomFilter2 {
       HashFunction xd = new HashFunction(3,7);
         long hashedNumber = xd.hash(10, 23);
         long position = hashedNumber % 20;
-        System.out.println("Zahaszowana 10 to: " + position);
-        HashFunctions.universalHash(10,20);
+   /*     System.out.println("Zahaszowana 10 to: " + position);
+        HashFunctions.universalHash(10,20);*/
+
+   HashFunctions.universalHash( 199999999 , 100000,3);
         //HashFunctions.simpleHash(199999999,10,3);
 
   //      Map<Integer, Integer

@@ -18,17 +18,80 @@ public class HashFunctions {
         BigInteger value = new BigInteger(String.valueOf(m));
         int p = value.nextProbablePrime().intValue();
         //bound is p-1, a oraz b losowane z przedzialu
-        int a = ThreadLocalRandom.current().nextInt(0, p);
-        int b = ThreadLocalRandom.current().nextInt(1, p);
+        int a = ThreadLocalRandom.current().nextInt(1, p);
+        int b = ThreadLocalRandom.current().nextInt(0, p);
 
         int position = ((a*x+b) % p) % m ;
 
         return position;
     }
 
+    public static void universalHash(int numbersRange, int m, int dataSet){
+        System.out.println("started...");
 
+        int position,a,b,p;
+        Map<Integer, Integer> treeMap = new TreeMap<>();
+        for(int i=0; i<10; i++){
+            treeMap.put(i,0);
+        }
+        BigInteger value = new BigInteger(String.valueOf(m));
 
+        //p>m
+        p = value.nextProbablePrime().intValue();
+        a = ThreadLocalRandom.current().nextInt(1, p);
+        b = ThreadLocalRandom.current().nextInt(0, p);
+        System.out.println("Wygenerowane wartoœci a: " + a +" | b: "+ b);
 
+        switch(dataSet){
+            //Kolejne liczby z zakresu od 0 do 10^8 ? 1
+            case 1: {
+                long startTime = System.nanoTime();
+                for(int i=0; i < numbersRange; i++){
+                    position = ((a*i+b) % p) % m ;
+//                    System.out.println(i+" : " + position);
+                    if(position >= 0 && position <10)
+                        treeMap.put(position,treeMap.get(position)+1);
+                }
+                long estimatedTime = System.nanoTime() - startTime;
+                printData(treeMap);
+                System.out.println("Czas obliczeñ: " + estimatedTime/1_000_000_000.0 + " sec");
+                break;
+            }
+            //parzyste
+            case 2: {
+                long startTime = System.nanoTime();
+                for(int i=0; i < numbersRange; i+=2){
+
+                    position = ((a*i+b) % p) % m ;
+//                   System.out.println(i+" : " + position);
+                    if(position >= 0 && position <10)
+                        treeMap.put(position,treeMap.get(position)+1);
+
+                }
+                long estimatedTime = System.nanoTime() - startTime;
+                printData(treeMap);
+                System.out.println("Czas obliczeñ: " + estimatedTime/1_000_000_000.0 + " sec");
+                break;
+            }
+            //nieparzyste
+            case 3: {
+                long startTime = System.nanoTime();
+                for(int i=1; i < numbersRange; i+=2){
+
+                    position = ((a*i+b) % p) % m ;
+//                    System.out.println(i+" : " + position);
+                    if(position >= 0 && position <10)
+                        treeMap.put(position,treeMap.get(position)+1);
+
+                }
+                long estimatedTime = System.nanoTime() - startTime;
+                printData(treeMap);
+                System.out.println("Czas obliczeñ: " + estimatedTime/1_000_000_000.0 + " sec");
+                break;
+            }
+            default: break;
+        }
+    }
 
     public static int simpleHash(long x, int m){
         return Math.toIntExact(x % m);
