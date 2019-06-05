@@ -149,9 +149,20 @@ public class BloomFilter2 {
         HashFunctions.universalHash(10,20);*/
 
    //HashFunctions.simpleHash(99999999, 1000,1);
-//        HashFunctions.simpleHash(99999999, 100000,1);
-        HashFunctions.universalHash(99999999, 10,1);
+//        HashFunctions.universalHash(99999999, 10,1);
+//        HashFunctions.universalHash(99999999, 10,1);
+//        HashFunctions.universalHash(100,10,2);
 //   HashFunctions.universalHash(99999999, 10,1);
+
+        BloomFilter bloomFilter = new BloomFilter(2,10);
+        bloomFilter.add(5);
+        bloomFilter.add(6);
+        Boolean bool1 = bloomFilter.contains(5);
+        Boolean bool2 = bloomFilter.contains(9);
+        System.out.println("Czy 5 jest w zbiorze? " + bool1);
+        System.out.println("Czy 9 jest w zbiorze? " + bool2);
+
+
         //HashFunctions.simpleHash(199999999,10,3);
 
   //      Map<Integer, Integer

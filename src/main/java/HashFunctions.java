@@ -1,5 +1,9 @@
 import lombok.Data;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Map;
 import java.util.TreeMap;
@@ -11,7 +15,7 @@ public class HashFunctions {
     // a,b - a od 1 do p-1, b od 0 do p-1
     //p>m
 
-    public static long universalHash(int x ,int m){
+    public static long universalHash(long x ,int m){
 
         BigInteger value = new BigInteger(String.valueOf(m));
         int p = value.nextProbablePrime().intValue();
@@ -37,9 +41,6 @@ public class HashFunctions {
 
         //p>m
         p = value.nextProbablePrime().intValue();
-        a = ThreadLocalRandom.current().nextInt(1, p);
-        b = ThreadLocalRandom.current().nextInt(0, p);
-        System.out.println("Wygenerowane wartosci a: " + a +" | b: "+ b);
 
         switch(dataSet){
             //Kolejne liczby z zakresu od 0 do 10^8 ? 1
@@ -47,6 +48,8 @@ public class HashFunctions {
                 counter=0;
                 long startTime = System.nanoTime();
                 for(long i=0; i < numbersRange; i++){
+                    a = ThreadLocalRandom.current().nextInt(1, p);
+                    b = ThreadLocalRandom.current().nextInt(0, p);
                     position = ((a*i+b) % p) % m ;
                         treeMap.put(position,treeMap.get(position)+1);
                         counter++;
@@ -65,7 +68,8 @@ public class HashFunctions {
                 counter=0;
                 long startTime = System.nanoTime();
                 for(int i=0; i < numbersRange; i+=2){
-
+                    a = ThreadLocalRandom.current().nextInt(1, p);
+                    b = ThreadLocalRandom.current().nextInt(0, p);
                     position = ((a*i+b) % p) % m ;
 //                   System.out.println(i+" : " + position);
                         treeMap.put(position,treeMap.get(position)+1);
@@ -86,7 +90,8 @@ public class HashFunctions {
                 counter=0;
                 long startTime = System.nanoTime();
                 for(int i=1; i < numbersRange; i+=2){
-
+                    a = ThreadLocalRandom.current().nextInt(1, p);
+                    b = ThreadLocalRandom.current().nextInt(0, p);
                     position = ((a*i+b) % p) % m ;
 //                    System.out.println(i+" : " + position);
                         treeMap.put(position,treeMap.get(position)+1);
@@ -105,7 +110,7 @@ public class HashFunctions {
         }
     }
 
-    public int simpleHash(long x, int m){
+    public static long simpleHash(long x, int m){
         return Math.toIntExact(x % m);
     }
     public static void simpleHash(int numbersRange, int m, int dataSet){
@@ -134,6 +139,7 @@ public class HashFunctions {
                 System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
                 System.out.println("Liczba liczb: " + counter);
                 calculateEntropy(m,treeMap,counter);
+                calculateMediumSquareError(m,treeMap,counter);
                 break;
             }
             //parzyste
@@ -151,6 +157,8 @@ public class HashFunctions {
                 System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
                 System.out.println("Liczba liczb: " + counter);
                 calculateEntropy(m,treeMap,counter);
+                calculateMediumSquareError(m,treeMap,counter);
+
 
                 break;
             }
@@ -171,7 +179,7 @@ public class HashFunctions {
                 System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
                 System.out.println("Liczba liczb: " + counter);
                 calculateEntropy(m,treeMap,counter);
-
+                calculateMediumSquareError(m,treeMap,counter);
                 break;
             }
             default: break;
@@ -208,7 +216,7 @@ public class HashFunctions {
 //               System.out.println("Dla " + i + " suma : " + sum );
         }
         float mse = ((1/(float)m) * sum);
-        System.out.printf("MSE= %.5f \n",mse );
+        System.out.printf("MSE= %.8f \n",mse );
 
 //        System.out.printf("E= %.5f  |  E*= %.5f  |  E*-E= %.5f \n", E, E_star, E_star_minus_E);
 //                System.out.println("E= " + E + " E*= " + E_star+ " E*-E = " + E_star_minus_E);
@@ -220,5 +228,109 @@ public class HashFunctions {
                     + entry.getKey()+" : "+entry.getValue());
         }
     }
+
+    public static void simpleHashMSDC(int m){
+        System.out.println("started...");
+        String csvFile = "facts-nns.csv";
+        BufferedReader br = null;
+        String line = "";
+        String cvsSplitBy = ",";
+
+        Map<Long, Integer> treeMap = new TreeMap<>();
+        for(long i=0; i<m; i++){
+            treeMap.put(i,0);
+        }
+        int lines = 0;
+        try {
+
+            br = new BufferedReader(new FileReader(csvFile));
+            long startTime = System.nanoTime();
+            while ((line = br.readLine()) != null) {
+
+                if(lines ==0) {lines++; continue;}
+                // use comma as separator
+                String[] facts = line.split(cvsSplitBy);
+
+                long position = simpleHash(Long.parseLong(facts[1]), m);
+                treeMap.put(position,treeMap.get(position)+1);
+//                System.out.println("[user_id= " + facts[0] + " , song_id=" + facts[1] + "]");
+
+                lines++;
+            }
+            long estimatedTime = System.nanoTime() - startTime;
+            printData(treeMap);
+            System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
+            calculateEntropy(m,treeMap,lines);
+            calculateMediumSquareError(m,treeMap,lines);
+
+            System.out.println("Ilosc wierszy w pliku: " + lines);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+
+    public static void universalHashMSDC(int m){
+        System.out.println("started...");
+        String csvFile = "facts-nns.csv";
+        BufferedReader br = null;
+        String line = "";
+        String cvsSplitBy = ",";
+
+        Map<Long, Integer> treeMap = new TreeMap<>();
+        for(long i=0; i<m; i++){
+            treeMap.put(i,0);
+        }
+        int lines = 0;
+        try {
+
+            br = new BufferedReader(new FileReader(csvFile));
+            long startTime = System.nanoTime();
+            while ((line = br.readLine()) != null) {
+
+                if(lines ==0) {lines++; continue;}
+                // use comma as separator
+                String[] facts = line.split(cvsSplitBy);
+
+                long position = universalHash(Long.parseLong(facts[1]), m);
+                treeMap.put(position,treeMap.get(position)+1);
+//                System.out.println("[user_id= " + facts[0] + " , song_id=" + facts[1] + "]");
+
+                lines++;
+            }
+            long estimatedTime = System.nanoTime() - startTime;
+            printData(treeMap);
+            System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
+            calculateEntropy(m,treeMap,lines);
+            calculateMediumSquareError(m,treeMap,lines);
+
+            System.out.println("Ilosc wierszy w pliku: " + lines);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
 
 }

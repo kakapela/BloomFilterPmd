@@ -5,17 +5,39 @@ import java.util.BitSet;
 @Data
 public class BloomFilter {
 
-    private int m; //rozmiar tablicy bitowej
-    private int k; //ilosc funkcji haszujacych
-    private int n; //liczba elementow w zbiorze
-    private int maxRange; //przedzial z ktorego beda losowane elementy
-    private BitSet set;
+    private int k;
+    private int m;
+    private BitSet bitArray;
+    private long position;
 
-    public BloomFilter(int m, int k, int n, int maxRange) {
-        this.m = m;
+    public BloomFilter(int k, int m) {
         this.k = k;
-        this.n = n;
-        this.maxRange = maxRange;
+        this.m = m;
+        bitArray =new BitSet(m);
+    }
+
+    public void add(long x){
+        System.out.println("x: " + x);
+        for(int i=0; i<k; i++) {
+            position = HashFunctions.universalHash(x, m);
+            bitArray.set(Math.toIntExact(position));
+            System.out.println("Dodano. Ustawilem bit na pozycji " +
+                    position);
+        }
+    }
+    public Boolean contains(long x){
+        System.out.println("x: " + x);
+        boolean flag=true;
+        for(int i=0; i<k; i++) {
+            position = HashFunctions.universalHash(x, m);
+            System.out.println("Sprawdzam bit na pozycji: " + position);
+            if(!bitArray.get(Math.toIntExact(position))) {
+                flag=false;
+                break;
+            }
+
+        }
+        return flag;
     }
 
 }
