@@ -132,9 +132,11 @@ public class BloomFilter2 {
 
         // Calculate stats and verify implementation
 
-        // bf.generateStats(range, set);
+         //bf.generateStats(range, set);
 
-
+        BloomFilter bloomFilter = new BloomFilter(2,10);
+        bloomFilter.addMultipleRandoms(3);
+        Stats.checkStats(bloomFilter);
 
       /*Zakres danych:
          99999999
@@ -142,31 +144,6 @@ public class BloomFilter2 {
         199999999 - tylko nieparzyste!
         */
 
-      HashFunction xd = new HashFunction(3,7);
-        long hashedNumber = xd.hash(10, 23);
-        long position = hashedNumber % 20;
-   /*     System.out.println("Zahaszowana 10 to: " + position);
-        HashFunctions.universalHash(10,20);*/
 
-   //HashFunctions.simpleHash(99999999, 1000,1);
-//        HashFunctions.universalHash(99999999, 10,1);
-//        HashFunctions.universalHash(99999999, 10,1);
-//        HashFunctions.universalHash(100,10,2);
-//   HashFunctions.universalHash(99999999, 10,1);
-
-        BloomFilter bloomFilter = new BloomFilter(2,10);
-        bloomFilter.add(5);
-        bloomFilter.add(6);
-        Boolean bool1 = bloomFilter.contains(5);
-        Boolean bool2 = bloomFilter.contains(9);
-        System.out.println("Czy 5 jest w zbiorze? " + bool1);
-        System.out.println("Czy 9 jest w zbiorze? " + bool2);
-
-
-        //HashFunctions.simpleHash(199999999,10,3);
-
-  //      Map<Integer, Integer
-        //      > keys = HashFunctions.simpleHash(data, 8);
-//HashFunctions.initDataSet(99999999);
     }
 }

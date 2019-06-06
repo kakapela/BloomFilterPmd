@@ -42,15 +42,15 @@ public class HashFunctions {
 
         //p>m
         p = value.nextProbablePrime().intValue();
-
+        a = ThreadLocalRandom.current().nextInt(1, p);
+        b = ThreadLocalRandom.current().nextInt(0, p);
         switch(dataSet){
             //Kolejne liczby z zakresu od 0 do 10^8 ? 1
             case 1: {
                 counter=0;
                 long startTime = System.nanoTime();
                 for(long i=0; i < numbersRange; i++){
-                    a = ThreadLocalRandom.current().nextInt(1, p);
-                    b = ThreadLocalRandom.current().nextInt(0, p);
+
                     position = ((a*i+b) % p) % m ;
                         treeMap.put(position,treeMap.get(position)+1);
                         counter++;
@@ -69,8 +69,7 @@ public class HashFunctions {
                 counter=0;
                 long startTime = System.nanoTime();
                 for(int i=0; i < numbersRange; i+=2){
-                    a = ThreadLocalRandom.current().nextInt(1, p);
-                    b = ThreadLocalRandom.current().nextInt(0, p);
+
                     position = ((a*i+b) % p) % m ;
 //                   System.out.println(i+" : " + position);
                         treeMap.put(position,treeMap.get(position)+1);
@@ -91,8 +90,7 @@ public class HashFunctions {
                 counter=0;
                 long startTime = System.nanoTime();
                 for(int i=1; i < numbersRange; i+=2){
-                    a = ThreadLocalRandom.current().nextInt(1, p);
-                    b = ThreadLocalRandom.current().nextInt(0, p);
+                 ;
                     position = ((a*i+b) % p) % m ;
 //                    System.out.println(i+" : " + position);
                         treeMap.put(position,treeMap.get(position)+1);
@@ -289,6 +287,8 @@ public class HashFunctions {
         String line = "";
         String cvsSplitBy = ",";
 
+        Hash hash = new Hash(m);
+
         Map<Long, Integer> treeMap = new TreeMap<>();
         for(long i=0; i<m; i++){
             treeMap.put(i,0);
@@ -303,8 +303,7 @@ public class HashFunctions {
                 if(lines ==0) {lines++; continue;}
                 // use comma as separator
                 String[] facts = line.split(cvsSplitBy);
-
-                long position = universalHash(Long.parseLong(facts[1]), m);
+                long position = hash.generate(Long.parseLong(facts[1]));
                 treeMap.put(position,treeMap.get(position)+1);
 //                System.out.println("[user_id= " + facts[0] + " , song_id=" + facts[1] + "]");
 
