@@ -109,10 +109,10 @@ public class BloomFilter2 {
     }
 
     public static void main(String[] args) {
-        double factor = 10; //zwykly mnoznik
-        int k = 10; //x - liczba funkcji haszujacych pojedynczy element
-        int n = 100_000; //n liczba elementow w zadanym zbiorze
-        int range = 100_000_000; //przedzial z ktorego beda losowane elementy
+        double factor =2; //zwykly mnoznik
+        int k = 2; //x - liczba funkcji haszujacych pojedynczy element
+        int n = 10; //n liczba elementow w zadanym zbiorze
+        int range = 2*n; //przedzial z ktorego beda losowane elementy
 
         int m = (int) Math.round(factor * n); //m - rozmiar tablicy bitowej
 
@@ -132,12 +132,12 @@ public class BloomFilter2 {
 
         // Calculate stats and verify implementation
 
-         //bf.generateStats(range, set);
+         bf.generateStats(range, set);
 
-        BloomFilter bloomFilter = new BloomFilter(2,10);
-        bloomFilter.addMultipleRandoms(3);
+        BloomFilter bloomFilter = new BloomFilter(2,20);
+        bloomFilter.addMultipleRandoms(10);
         Stats.checkStats(bloomFilter);
-
+        Stats.calculateProbabilityOfFP(bloomFilter,10);
       /*Zakres danych:
          99999999
         199999999 - tylko parzyste!
