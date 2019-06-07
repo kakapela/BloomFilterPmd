@@ -133,11 +133,12 @@ public class BloomFilter2 {
         // Calculate stats and verify implementation
 
          //bf.generateStats(range, set);
-
+/*
         BloomFilter bloomFilter = new BloomFilter(2,10);
         bloomFilter.addMultipleRandoms(3);
-        Stats.checkStats(bloomFilter);
+        Stats.checkStats(bloomFilter);*/
 
+HashFunctions.universalHashMSDC(10);
       /*Zakres danych:
          99999999
         199999999 - tylko parzyste!
