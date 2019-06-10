@@ -8,39 +8,20 @@ public class Stats {
     public static void checkStats(BloomFilter filter) {
         System.out.println("checking stats...");
         int TP = 0, FP = 0, TN = 0, FN = 0;
-
-
-        HashSet<Long> set = filter.getSet();
-        BufferedWriter out = null;
-        try {
-            out = new BufferedWriter(new FileWriter("naczynia.txt"));
-            Iterator it = set.iterator(); // why capital "M"?
-            while(it.hasNext()) {
-                out.write(String.valueOf(it.next()));
-                out.newLine();
-            }
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        HashSet<Integer> set = filter.getSet();
 //        set.forEach(System.out::println);
-        for (long i = 0; i < filter.getR(); i++) {
-//            System.out.println("Sprawdzana liczba: " + i);
-            if( filter.contains(i) && set.contains(i))  {TP ++;
-//                System.out.println("i: "+ i+" TP++" );
-                }
-            else if (!filter.contains(i) && !set.contains(i)) {TN++;
-            //System.out.println("i: "+ i+" TN++ ");
-            }
-            else if (!filter.contains(i) && set.contains(i)) {FN++;
-           // System.out.println("i: "+ i+" FN++ ");
-            }
-            else if (filter.contains(i) && !set.contains(i)) {FP++;
-          //  System.out.println("UPS! FP dla i: "+ i+" FP++ ");
-            }
+        long startTime = System.nanoTime();
+        for (int i = 0; i < filter.getRange(); i++) {
+            Boolean filterContains = filter.contains(i);
+            Boolean setContains = set.contains(i);
+            if( filterContains && setContains)  TP ++;
+            else if (!filterContains && !setContains) TN++;
+            else if (!filterContains && setContains) FN++;
+            else if (filterContains && !setContains) FP++;
         }
-            System.out.println("TP = " + String.format("%6d", TP) + "\tTPR = "
+        long estimatedTime = System.nanoTime() - startTime;
+        System.out.printf("Czas filtrowania danych: %.6f sec\n", estimatedTime/1_000_000_000.0 );
+        System.out.println("TP = " + String.format("%6d", TP) + "\tTPR = "
                     + String.format("%1.4f", (double) TP / (double)((double)TP+(double)FN)));
             System.out.println("TN = " + String.format("%6d", TN) + "\tTNR = "
                     + String.format("%1.4f", (double) TN / (double) ((double)TN+(double)FP) ));
