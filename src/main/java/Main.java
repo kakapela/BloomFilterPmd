@@ -15,9 +15,9 @@ public class Main {
         Stats.checkStats(bloomFilter);
         Stats.calculateProbabilityOfFP(bloomFilter,n);*/
 //        for (int i =0; i<10; i++){
-            BloomFilter bloomFilter = new BloomFilter(2,1000,999999999,3);
+            /*BloomFilter bloomFilter = new BloomFilter(2,1000,999999999,3);
             bloomFilter.prepareMsdcData();
-            bloomFilter.filterForMSDC();
+            bloomFilter.filterForMSDC();*/
 //        }
       //  BloomFilter.filterForMSDC();
         /*Zakres danych:
@@ -25,5 +25,6 @@ public class Main {
         199999999 - tylko parzyste!
         199999999 - tylko nieparzyste!
         */
+        Hash.universalHash(99999999 , 1000, 1);
     }
 }

@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -31,6 +34,7 @@ public class Hash {
     }
     public static void universalHash(int numbersRange, int m, int dataSet){
         System.out.println("started...");
+        System.out.println("TRUDNY HASH || M= " + m);
 
         long position;
         int a,b,p,counter;
@@ -42,8 +46,10 @@ public class Hash {
 
         //p>m
         p = value.nextProbablePrime().intValue();
-        a = ThreadLocalRandom.current().nextInt(1, p);
-        b = ThreadLocalRandom.current().nextInt(0, p);
+
+        Random rand = new Random(0);
+        a = rand.nextInt(p - 1) + 1;
+        b = rand.nextInt(p);
         switch(dataSet){
             //Kolejne liczby z zakresu od 0 do 10^8 ? 1
             case 1: {
@@ -51,6 +57,7 @@ public class Hash {
                 long startTime = System.nanoTime();
                 for(long i=0; i < numbersRange; i++){
                     position = ((a*i+b) % p) % m ;
+
                     treeMap.put(position,treeMap.get(position)+1);
                     counter++;
                 }
@@ -66,8 +73,10 @@ public class Hash {
             case 2: {
                 counter=0;
                 long startTime = System.nanoTime();
+
                 for(int i=0; i < numbersRange; i+=2){
-                    position = ((a*i+b) % p) % m ;
+                    position = (long)((long)((long)a*i+(long)b) %(long) p) %(long) m ;
+//                    System.out.println("Position: " + position+ " liczba: "+ i+" a: " + a+ " b: "+ b + " p:" + p);
                     treeMap.put(position,treeMap.get(position)+1);
                     counter++;
                 }
@@ -84,7 +93,7 @@ public class Hash {
                 counter=0;
                 long startTime = System.nanoTime();
                 for(int i=1; i < numbersRange; i+=2){
-                    position = ((a*i+b) % p) % m ;
+                    position = (long)((long)((long)a*i+(long)b) %(long) p) %(long) m ;
                     treeMap.put(position,treeMap.get(position)+1);
                     counter++;
                 }
@@ -101,6 +110,7 @@ public class Hash {
     }
     public static void simpleHash(int numbersRange, int m, int dataSet){
         System.out.println("started...");
+        System.out.println("LATWY HASH || M= " + m);
         long position;
         int  counter;
         Map<Long, Integer> treeMap = new TreeMap<>();
@@ -164,18 +174,19 @@ public class Hash {
     }
 
     public static void calculateEntropy(int m, Map<Long, Integer> treeMap, int n){
-        float sum=0;
+        Double sum = new Double(0);
         for(long i =0; i<m;i++){
-            float pi = (float)treeMap.get(i)/(float)n;
+            Double pi = new Double(treeMap.get(i))/n;
             if(pi!=0)
-                sum+=(float)pi*(float)Math.log10((float)pi);
-            else
-                sum+=(float)0;
+                sum= sum +  (pi * Math.log10(pi));
         }
-        float E = -1 * (float)sum;
-        float E_star = (float) (-1 * Math.log10(1/(float)m));
-        double E_star_minus_E = (double)(E_star-E);
-        System.out.printf("E= %.5f  |  E*= %.5f  |  E*-E= %.5f \n", E, E_star, E_star_minus_E);
+        sum=-sum;
+
+        DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+        df.setMaximumFractionDigits(340); // 340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
+        Double E_star = - Math.log10((1/new Double(m)));
+        Double diff = sum- E_star;
+        System.out.println("E= " + df.format(sum) + "  | E*= " +df.format(E_star) + "  | E*-E= " + df.format(Math.abs(diff)) );
     }
     public static long simpleHash(long x, int m){
         return Math.toIntExact(x % m);
