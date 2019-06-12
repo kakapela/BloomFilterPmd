@@ -29,7 +29,7 @@ public class BloomFilter {
     private Map<Integer, HashSet<Integer> > usersData;
     private ArrayList<Integer> randomIdSongs;
 
-    public BloomFilter(int k, int m, int range) {
+    public BloomFilter(int k, int m, int range, int n) {
         this.k = k;
         this.m = m;
         this.range= range;
@@ -46,8 +46,13 @@ public class BloomFilter {
             Hash hash = new Hash(a,b,p,m);
             hashesFunctions.add(hash);
         }
+        set = new HashSet<>(n);
+        for(int i = 0; i <n; i++) {
+            int number = random.nextInt(range) + 1;
+            set.add(number);
+        }
     }
-    public BloomFilter(int k, int m, int range, int numberOfUsers) {
+   /* public BloomFilter(int k, int m, int range, int numberOfUsers) {
         this.k = k;
         this.m = m;
         this.range= range;
@@ -65,7 +70,7 @@ public class BloomFilter {
             Hash hash = new Hash(a,b,p,m);
             hashesFunctions.add(hash);
         }
-    }
+    }*/
 
     public void add(int x){
         for (Hash hash: hashesFunctions) {
@@ -76,13 +81,9 @@ public class BloomFilter {
 
     Random random = new Random();
 
-    public void addMultipleRandoms(int n){
-        set = new HashSet<>(n);
+    public void addMultipleRandoms(){
+
         long startTime = System.nanoTime();
-        for(int i = 0; i <n; i++) {
-            int number = random.nextInt(range) + 1;
-            set.add(number);
-        }
         for (int item : set) {
             add(item);
         }

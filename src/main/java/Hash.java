@@ -29,11 +29,12 @@ public class Hash {
         this.m = m;
     }
     public long generate(long x){
-        position =(((a*x+b) % p) % m);
+        position = (long)((long)((long)a*x+(long)b) %(long) p) %(long) m ;
         return position;
     }
     public static void universalHash(int numbersRange, int m, int dataSet){
         System.out.println("started...");
+        System.out.println("Trudny hash || m= " + m);
 
         long position;
         int a,b,p,counter;
@@ -45,8 +46,10 @@ public class Hash {
 
         //p>m
         p = value.nextProbablePrime().intValue();
-        a = ThreadLocalRandom.current().nextInt(1, p);
-        b = ThreadLocalRandom.current().nextInt(0, p);
+
+        Random rand = new Random(0);
+        a = rand.nextInt(p - 1) + 1;
+        b = rand.nextInt(p);
         switch(dataSet){
             //Kolejne liczby z zakresu od 0 do 10^8 ? 1
             case 1: {
@@ -54,13 +57,14 @@ public class Hash {
                 long startTime = System.nanoTime();
                 for(long i=0; i < numbersRange; i++){
                     position = ((a*i+b) % p) % m ;
+
                     treeMap.put(position,treeMap.get(position)+1);
                     counter++;
                 }
                 long estimatedTime = System.nanoTime() - startTime;
                 printData(treeMap,10);
                 System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
-                System.out.println("Liczba liczb: " + counter);
+//                System.out.println("Liczba liczb: " + counter);
                 calculateEntropy(m,treeMap,counter);
                 calculateMediumSquareError(m,treeMap,counter);
                 break;
@@ -69,15 +73,17 @@ public class Hash {
             case 2: {
                 counter=0;
                 long startTime = System.nanoTime();
+
                 for(int i=0; i < numbersRange; i+=2){
-                    position = ((a*i+b) % p) % m ;
+                    position = (long)((long)((long)a*i+(long)b) %(long) p) %(long) m ;
+//                    System.out.println("Position: " + position+ " liczba: "+ i+" a: " + a+ " b: "+ b + " p:" + p);
                     treeMap.put(position,treeMap.get(position)+1);
                     counter++;
                 }
                 long estimatedTime = System.nanoTime() - startTime;
                 printData(treeMap,10);
                 System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
-                System.out.println("Liczba liczb: " + counter);
+//                System.out.println("Liczba liczb: " + counter);
                 calculateEntropy(m,treeMap,counter);
                 calculateMediumSquareError(m,treeMap,counter);
                 break;
@@ -87,14 +93,14 @@ public class Hash {
                 counter=0;
                 long startTime = System.nanoTime();
                 for(int i=1; i < numbersRange; i+=2){
-                    position = ((a*i+b) % p) % m ;
+                    position = (long)((long)((long)a*i+(long)b) %(long) p) %(long) m ;
                     treeMap.put(position,treeMap.get(position)+1);
                     counter++;
                 }
                 long estimatedTime = System.nanoTime() - startTime;
                 printData(treeMap,10);
                 System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
-                System.out.println("Liczba liczb: " + counter);
+//                System.out.println("Liczba liczb: " + counter);
                 calculateEntropy(m,treeMap,counter);
                 calculateMediumSquareError(m,treeMap,counter);
                 break;
@@ -104,6 +110,7 @@ public class Hash {
     }
     public static void simpleHash(int numbersRange, int m, int dataSet){
         System.out.println("started...");
+        System.out.println("Prosty hash || M= " + m);
         long position;
         int  counter;
         Map<Long, Integer> treeMap = new TreeMap<>();
@@ -123,7 +130,7 @@ public class Hash {
                 long estimatedTime = System.nanoTime() - startTime;
                 printData(treeMap,10);
                 System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
-                System.out.println("Liczba liczb: " + counter);
+//                System.out.println("Liczba liczb: " + counter);
                 calculateEntropy(m,treeMap,counter);
                 calculateMediumSquareError(m,treeMap,counter);
                 break;
@@ -140,7 +147,7 @@ public class Hash {
                 long estimatedTime = System.nanoTime() - startTime;
                 printData(treeMap,10);
                 System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
-                System.out.println("Liczba liczb: " + counter);
+//                System.out.println("Liczba liczb: " + counter);
                 calculateEntropy(m,treeMap,counter);
                 calculateMediumSquareError(m,treeMap,counter);
                 break;
@@ -157,7 +164,7 @@ public class Hash {
                 long estimatedTime = System.nanoTime() - startTime;
                 printData(treeMap,10);
                 System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
-                System.out.println("Liczba liczb: " + counter);
+//                System.out.println("Liczba liczb: " + counter);
                 calculateEntropy(m,treeMap,counter);
                 calculateMediumSquareError(m,treeMap,counter);
                 break;
@@ -167,28 +174,26 @@ public class Hash {
     }
 
     public static void calculateEntropy(int m, Map<Long, Integer> treeMap, int n){
-        Double sum= new Double(0);
+        Double sum = new Double(0);
         for(long i =0; i<m;i++){
             Double pi = new Double(treeMap.get(i))/n;
-
             if(pi!=0)
-                sum = sum + (pi*Math.log10(pi));
-
+                sum= sum +  (pi * Math.log10(pi));
         }
-        DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-        df.setMaximumFractionDigits(340);
-        sum =-sum;
-        String E = df.format(sum);
-       Double E_star = -Math.log10(1/new Double(m));
-       Double Estar_minus_E = sum - E_star;
+        sum=-sum;
 
-        System.out.println("E: " + E + " E* = " + df.format(E_star) + " E*-E = "+ Math.abs(Estar_minus_E));
+        DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+        df.setMaximumFractionDigits(340); // 340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
+        Double E_star = - Math.log10((1/new Double(m)));
+        Double diff = sum- E_star;
+        System.out.println("E= " + df.format(sum) + "  | E*= " +df.format(E_star) + "  | E*-E= " + df.format(Math.abs(diff)) );
     }
     public static long simpleHash(long x, int m){
         return Math.toIntExact(x % m);
     }
     public static void simpleHashMSDC(int m){
         System.out.println("started...");
+        System.out.println("Prosty Hash || m=" + m + " dane MSDC");
         String csvFile = "facts-nns.csv";
         BufferedReader br = null;
         String line = "";
@@ -213,6 +218,11 @@ public class Hash {
             printData(treeMap,10);
             System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
             calculateEntropy(m,treeMap,lines);
+          /*  int sum=0;
+            for (long i =0; i<treeMap.size(); i++) {
+                sum+=treeMap.get(i);
+            }
+            System.out.println("Suma elementow: " + sum);*/
             calculateMediumSquareError(m,treeMap,lines);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -231,6 +241,7 @@ public class Hash {
 
     public static void universalHashMSDC(int m){
         System.out.println("started...");
+        System.out.println("Trudny hash || m=" + m + " dane MSDC");
         String csvFile = "facts-nns.csv";
         BufferedReader br = null;
         String line = "";
@@ -239,8 +250,8 @@ public class Hash {
 
         BigInteger value =new BigInteger(String.valueOf(m));
         int p = value.nextProbablePrime().intValue();
-        int a = rand.nextInt(p - 1) + 1;
-        int b = rand.nextInt(p);
+      int a =   ThreadLocalRandom.current().nextInt(1, p);
+        int b =   ThreadLocalRandom.current().nextInt(0, p);
         Hash hash = new Hash(a,b,p,m);
         Map<Long, Integer> treeMap = new TreeMap<>();
         for(long i=0; i<m; i++){
@@ -262,6 +273,11 @@ public class Hash {
             printData(treeMap,10);
             System.out.printf("Czas obliczen: %.6f sec\n", estimatedTime/1_000_000_000.0 );
             calculateEntropy(m,treeMap,lines);
+     /*       int sum = 0;
+            for (long i =0; i<treeMap.size(); i++) {
+                sum+=treeMap.get(i);
+            }
+            System.out.println("Suma elementow: " + sum);*/
             calculateMediumSquareError(m,treeMap,lines);
 
         } catch (FileNotFoundException e) {
@@ -289,7 +305,7 @@ public class Hash {
         float mse = ((1/(float)m) * sum);
         System.out.printf("MSE= %.8f \n",mse );
     }
-    public static void printData(Map<Long,Integer> map, long n){
+    public static void  printData(Map<Long,Integer> map, long n){
         for(long i = 0; i<n; i++){
             System.out.println("Liczba zmapowanych wartosci kluczy: " + i +" : "+ map.get(i));
         }
