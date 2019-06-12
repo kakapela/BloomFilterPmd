@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -164,18 +167,22 @@ public class Hash {
     }
 
     public static void calculateEntropy(int m, Map<Long, Integer> treeMap, int n){
-        float sum=0;
+        Double sum= new Double(0);
         for(long i =0; i<m;i++){
-            float pi = (float)treeMap.get(i)/(float)n;
+            Double pi = new Double(treeMap.get(i))/n;
+
             if(pi!=0)
-                sum+=(float)pi*(float)Math.log10((float)pi);
-            else
-                sum+=(float)0;
+                sum = sum + (pi*Math.log10(pi));
+
         }
-        float E = -1 * (float)sum;
-        float E_star = (float) (-1 * Math.log10(1/(float)m));
-        double E_star_minus_E = (double)(E_star-E);
-        System.out.printf("E= %.5f  |  E*= %.5f  |  E*-E= %.5f \n", E, E_star, E_star_minus_E);
+        DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+        df.setMaximumFractionDigits(340);
+        sum =-sum;
+        String E = df.format(sum);
+       Double E_star = -Math.log10(1/new Double(m));
+       Double Estar_minus_E = sum - E_star;
+
+        System.out.println("E: " + E + " E* = " + df.format(E_star) + " E*-E = "+ Math.abs(Estar_minus_E));
     }
     public static long simpleHash(long x, int m){
         return Math.toIntExact(x % m);
